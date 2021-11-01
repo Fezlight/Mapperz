@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 class MapperzTest {
-    private static final int MAX_EXECUTION_TIME = 5;
+    private static final int MAX_EXECUTION_TIME = 10;
 
     @Data
     @AllArgsConstructor(staticName = "of")
