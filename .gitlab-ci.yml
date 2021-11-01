@@ -46,6 +46,7 @@ release:
     - git config --global user.email "alex_se@hotmail.fr"
     - git config --global user.name "Gitlab Agent"
   script:
+    - git checkout -B "$CI_BUILD_REF_NAME"
     - mvn release:prepare -Dmaven.test.skip=true -s ci_settings.xml -B
     - mvn release:perform -Dmaven.test.skip=true -s ci_settings.xml -B
   needs:
