@@ -22,11 +22,12 @@
         <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <sign-maven-plugin.version>0.3.1</sign-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
     </properties>
 
     <scm>
         <connection>scm:git:https://gitlab.fezlight.fr/fezlight/mapperz.git</connection>
-        <developerConnection>scm:git:ssh://gitlab.fezlight.fr:10022/fezlight/mapperz.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@gitlab.fezlight.fr:10022/fezlight/mapperz.git</developerConnection>
         <url>${project.url}</url>
     </scm>
 
@@ -129,6 +130,26 @@
                         <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>coverage-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>coverage-report</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>

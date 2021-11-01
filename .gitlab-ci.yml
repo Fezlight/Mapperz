@@ -26,6 +26,8 @@ verify:jdk8:
   stage: test
   script:
     - 'mvn $MAVEN_CLI_OPTS verify'
+    - awk -F"," '{ lines += $8 + $9; covered += $9 } END { print covered, "/", lines, "lines covered"; print 100*covered/lines, "% covered" }' target/site/jacoco/jacoco.csv || echo "0.0 % covered"
+  coverage: '/\d+.*\d+ \% covered/'
   artifacts:
     when: always
     reports:
