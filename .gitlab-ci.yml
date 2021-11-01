@@ -31,4 +31,4 @@ deploy:jdk8:
   script:
     - 'mvn $MAVEN_CLI_OPTS deploy -s ci_settings.xml'
   rules:
-    if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
