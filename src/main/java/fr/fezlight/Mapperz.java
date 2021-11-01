@@ -110,7 +110,7 @@ public final class Mapperz<I, O> {
      * it will not be mapped to output class.
      * @param input Input class instance
      * @param output Output class if you want to provide (be careful if you use <br>
-     * {@link Mapperz#declareInConstructor(Function)}, you cannot use this field to override. Instead use {@link Mapperz#map(I)}
+     * {@link Mapperz#declareInConstructor(Function)}, you cannot use this field to override. Instead use {@link Mapperz#map(Object)}
      * @return Output class instance with all value declared mapped from input class.
      */
     public O map(I input, Supplier<O> output) {
