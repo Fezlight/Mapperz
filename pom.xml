@@ -25,8 +25,8 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git://gitlab.fezlight.fr/fezlight/mapperz.git</connection>
-        <developerConnection>scm:git:git@gitlab.fezlight.fr:10022/fezlight/mapperz.git</developerConnection>
+        <connection>scm:git:https://gitlab.fezlight.fr/fezlight/mapperz.git</connection>
+        <developerConnection>scm:git:ssh://gitlab.fezlight.fr:10022/fezlight/mapperz.git</developerConnection>
         <url>${project.url}</url>
     </scm>
 
