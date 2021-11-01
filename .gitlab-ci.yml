@@ -16,7 +16,12 @@ cache:
   paths:
     - .m2/repository
 
-# Verify merge requests using JDK8
+stages:
+  - test
+  - release
+  - deploy
+
+  # Verify merge requests using JDK8
 verify:jdk8:
   stage: test
   script:
@@ -24,9 +29,42 @@ verify:jdk8:
   artifacts:
     when: always
     reports:
+      dotenv: variables.env
       junit:
         - target/surefire-reports/TEST-*.xml
         - target/failsafe-reports/TEST-*.xml
+
+release:
+  stage: release
+  before_script:
+    - 'which ssh-agent || ( apk update && apk add openssh-client git )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | ssh-add - > /dev/null
+    - mkdir -m 700 -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - git remote set-url origin ssh://git@gitlab.fezlight.fr:10022/$CI_PROJECT_PATH.git
+    - git config --global user.email "alex_se@hotmail.fr"
+    - git config --global user.name "Gitlab Agent"
+  script:
+    - mvn release:prepare -Dmaven.test.skip=true -s ci_settings.xml -B
+    - mvn release:perform -Dmaven.test.skip=true -s ci_settings.xml -B
+  needs:
+    - "verify:jdk8"
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - when: never
+
+tag:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  script:
+    - echo "Creating tag for version v$VERSION..."
+  needs:
+    - "release"
+  release:
+    name: 'Release v$VERSION'
+    description: 'Tag related to v$VERSION'
+    tag_name: 'v$VERSION'
 
 # To deploy packages from CI, create a ci_settings.xml file
 # For deploying packages to GitLab's Maven Repository: See https://docs.gitlab.com/ee/user/packages/maven_repository/index.html#create-maven-packages-with-gitlab-cicd for more details.
@@ -35,6 +73,6 @@ verify:jdk8:
 deploy:jdk8:
   stage: deploy
   script:
-    - 'mvn $MAVEN_CLI_OPTS deploy -s ci_settings.xml'
+    - 'mvn $MAVEN_CLI_OPTS deploy -Dmaven.test.skip=true -s ci_settings.xml'
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
