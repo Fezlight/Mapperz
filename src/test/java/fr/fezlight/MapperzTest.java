@@ -18,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 class MapperzTest {
-    private static final int MAX_EXECUTION_TIME = 10;
-
     @Data
     @AllArgsConstructor(staticName = "of")
     static final class TestObject {
@@ -106,16 +104,13 @@ class MapperzTest {
                 .declare(TestObject::isBool, TestObjectDTO::setBool)
                 .declare(TestObject::getInteger, TestObjectDTO::setInteger);
 
-        AtomicReference<TestObjectDTO> result = new AtomicReference<>();
-        assertTimeout(Duration.ofMillis(MAX_EXECUTION_TIME), () -> {
-            result.set(mapper.map(TestObject.of(12, true, "test")));
-        });
+        TestObjectDTO result = mapper.map(TestObject.of(12, true, "test"));
 
-        assertThat(result.get()).isNotNull();
-        assertThat(result.get().getInteger()).isEqualTo(12);
-        assertThat(result.get().getBool()).isTrue();
+        assertThat(result).isNotNull();
+        assertThat(result.getInteger()).isEqualTo(12);
+        assertThat(result.getBool()).isTrue();
         // Always null because no mapping has been declared by using declare()
-        assertThat(result.get().getString()).isNull();
+        assertThat(result.getString()).isNull();
     }
 
     @Test
@@ -127,15 +122,12 @@ class MapperzTest {
                 .declare(TestObject::getInteger, TestObjectDTO::setInteger)
                 .declare(TestObject::getString, TestObjectDTO::setString);
 
-        AtomicReference<TestObjectDTO> result = new AtomicReference<>();
-        assertTimeout(Duration.ofMillis(MAX_EXECUTION_TIME), () -> {
-            result.set(mapper.map(TestObject.of(12, true, "test")));
-        });
+        TestObjectDTO result = mapper.map(TestObject.of(12, true, "test"));
 
-        assertThat(result.get()).isNotNull();
-        assertThat(result.get().getInteger()).isEqualTo(12);
-        assertThat(result.get().getBool()).isTrue();
-        assertThat(result.get().getString()).isEqualTo("test");
+        assertThat(result).isNotNull();
+        assertThat(result.getInteger()).isEqualTo(12);
+        assertThat(result.getBool()).isTrue();
+        assertThat(result.getString()).isEqualTo("test");
     }
 
     @Test
@@ -146,12 +138,9 @@ class MapperzTest {
                 .declare(TestObject::isBool, TestObjectDTO::setBool)
                 .declare(TestObject::getInteger, TestObjectDTO::setInteger);
 
-        AtomicReference<TestObjectDTO> result = new AtomicReference<>();
-        assertTimeout(Duration.ofMillis(MAX_EXECUTION_TIME), () -> {
-            result.set(mapper.map(null));
-        });
+        TestObjectDTO result = mapper.map(null);
 
-        assertThat(result.get()).isNull();
+        assertThat(result).isNull();
     }
 
     @Test
@@ -184,19 +173,14 @@ class MapperzTest {
                 .declareInConstructor(TestObject2DTO::getReleaseDate);
 
         LocalDate date = LocalDate.now();
-        AtomicReference<TestObject2> result = new AtomicReference<>();
-        assertTimeout(Duration.ofMillis(MAX_EXECUTION_TIME), () -> {
-            result.set(mapper.map(
-                    TestObject2DTO.of(12, "test", date, "test2")
-            ));
-        });
+        TestObject2 result = mapper.map(TestObject2DTO.of(12, "test", date, "test2"));
 
-        assertThat(result.get()).isNotNull();
-        assertThat(result.get().getId()).isEqualTo(12);
-        assertThat(result.get().getDescription()).isEqualTo("test");
-        assertThat(result.get().getReleaseDate()).isEqualTo(date);
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(12);
+        assertThat(result.getDescription()).isEqualTo("test");
+        assertThat(result.getReleaseDate()).isEqualTo(date);
         // Not mapped with declare()
-        assertThat(result.get().getNotInConstructor()).isNull();
+        assertThat(result.getNotInConstructor()).isNull();
     }
 
     @Test
@@ -210,18 +194,13 @@ class MapperzTest {
                 .declare(TestObject2DTO::getInConstructor, TestObject2::setNotInConstructor);
 
         LocalDate date = LocalDate.now();
-        AtomicReference<TestObject2> result = new AtomicReference<>();
-        assertTimeout(Duration.ofMillis(MAX_EXECUTION_TIME), () -> {
-            result.set(mapper.map(
-                    TestObject2DTO.of(12, "test", date, "test2")
-            ));
-        });
+        TestObject2 result = mapper.map(TestObject2DTO.of(12, "test", date, "test2"));
 
-        assertThat(result.get()).isNotNull();
-        assertThat(result.get().getId()).isEqualTo(12);
-        assertThat(result.get().getDescription()).isEqualTo("test");
-        assertThat(result.get().getReleaseDate()).isEqualTo(date);
-        assertThat(result.get().getNotInConstructor()).isEqualTo("test2");
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(12);
+        assertThat(result.getDescription()).isEqualTo("test");
+        assertThat(result.getReleaseDate()).isEqualTo(date);
+        assertThat(result.getNotInConstructor()).isEqualTo("test2");
     }
 
     @Test
@@ -231,15 +210,10 @@ class MapperzTest {
                 .init(TestObject.class, TestObjectDTO.class)
                 .declare(TestObject::getString, TestObjectDTO::setInteger, Integer::valueOf);
 
-        AtomicReference<TestObjectDTO> result = new AtomicReference<>();
-        assertTimeout(Duration.ofMillis(MAX_EXECUTION_TIME), () -> {
-            result.set(mapper.map(
-                    TestObject.of(1, true, "20")
-            ));
-        });
+        TestObjectDTO result = mapper.map(TestObject.of(1, true, "20"));
 
-        assertThat(result.get()).isNotNull();
-        assertThat(result.get().getInteger()).isEqualTo(20);
+        assertThat(result).isNotNull();
+        assertThat(result.getInteger()).isEqualTo(20);
     }
 
     @Test
@@ -253,15 +227,10 @@ class MapperzTest {
                 .init(TestObject.class, TestObjectDTO.class)
                 .declare(TestObject::getString, TestObjectDTO::setInteger, function);
 
-        AtomicReference<TestObjectDTO> result = new AtomicReference<>();
-        assertTimeout(Duration.ofMillis(MAX_EXECUTION_TIME), () -> {
-            result.set(mapper.map(
-                    TestObject.of(1, true, "20")
-            ));
-        });
+        TestObjectDTO result = mapper.map(TestObject.of(1, true, "20"));
 
-        assertThat(result.get()).isNotNull();
-        assertThat(result.get().getInteger()).isEqualTo(60);
+        assertThat(result).isNotNull();
+        assertThat(result.getInteger()).isEqualTo(60);
     }
 
     @Test
@@ -271,15 +240,10 @@ class MapperzTest {
                 .init(TestObject.class, TestObjectDTO.class)
                 .declare(TestObject::getString, TestObjectDTO::setInteger, new TestFormatter());
 
-        AtomicReference<TestObjectDTO> result = new AtomicReference<>();
-        assertTimeout(Duration.ofMillis(MAX_EXECUTION_TIME), () -> {
-            result.set(mapper.map(
-                    TestObject.of(1, true, "20")
-            ));
-        });
+        TestObjectDTO result = mapper.map(TestObject.of(1, true, "20"));
 
-        assertThat(result.get()).isNotNull();
-        assertThat(result.get().getInteger()).isEqualTo(60);
+        assertThat(result).isNotNull();
+        assertThat(result.getInteger()).isEqualTo(60);
     }
 
 }
