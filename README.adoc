@@ -1,19 +1,37 @@
 = {project-name}
 FezLight
-v1.0, 2021-10-31
+v1.0.0, 2021-10-31
 :project-name: Mapperz
 :hardbreaks-option:
 
 {project-name} is a Java library for the mapping of Java bean classes between each other.
 It will provide to you a powerful engine to write mapping using Java 8 Lambda Function / Consumer feature. {project-name} is built to be helpful for many situations like when you want to write complex mapping, lambda expression will help you to achieve this work.
 
+== Requirement
+
+Java 8+
+
 == Installation
 
 Maven::
-// TODO
+
+[source, xml]
+----
+<dependency>
+    <groupId>fr.fezlight</groupId>
+    <artifactId>mapperz</artifactId>
+    <version>VERSION</version>
+</dependency>
+----
 
 Gradle::
-// TODO
+
+[source]
+----
+implementation 'fr.fezlight:mapperz:VERSION'
+----
+
+See on link:https://search.maven.org/artifact/fr.fezlight/mapperz[Sonatype Maven Central] for versions.
 
 == Usage
 
@@ -26,5 +44,5 @@ Please make sure to update tests as appropriate.
 
 == License
 
-{project-name} is licensed under GNU GPLv3 License.
-link:LICENSE.txt[here]
+{project-name} is licensed under Apache License.
+link:https://www.apache.org/licenses/LICENSE-2.0.txt[Available here]

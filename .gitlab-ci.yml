@@ -2,7 +2,16 @@ variables:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
 
-image: maven:3.8.3-ibmjava-8-alpine
+default:
+  image: maven:3.8.3-ibmjava-8-alpine
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: '$CI_COMMIT_TAG'
+      when: never
+    - when: always
 
 cache:
   paths:
@@ -22,10 +31,8 @@ verify:jdk8:
   artifacts:
     when: always
     reports:
-      dotenv: variables.env
       junit:
         - target/surefire-reports/TEST-*.xml
-        - target/failsafe-reports/TEST-*.xml
 
 maven-release:
   stage: release
@@ -53,3 +60,28 @@ deploy:jdk8:
     - 'mvn $MAVEN_CLI_OPTS deploy -Dmaven.test.skip=true -s ci_settings.xml'
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+
+.pages-deploy:
+  stage: deploy
+  image: node:10.0.0-alpine
+  dependencies: []
+  before_script:
+    - npm install gitbook-cli -g
+    - gitbook fetch 3.2.3
+    - gitbook install
+  script:
+    - gitbook build ./wiki public
+
+pages-test:
+  extends: .pages-deploy
+  rules:
+    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+
+pages:
+  extends: .pages-deploy
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
