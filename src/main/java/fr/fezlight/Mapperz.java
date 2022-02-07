@@ -1,7 +1,5 @@
 package fr.fezlight;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.*;
 import java.util.function.*;
 
@@ -14,7 +12,6 @@ import java.util.function.*;
  * @author FezLight
  * @version 1.0
  */
-@Slf4j
 public final class Mapperz<I, O> {
     private final Map<Function<I, Object>, BiConsumer<O, Object>> mappings = new HashMap<>();
     private final List<Function<I, Object>> listArgsConstructor = new ArrayList<>();
@@ -34,7 +31,7 @@ public final class Mapperz<I, O> {
      * @param output Output class type
      * @param <I>    Input class generic type inherited from <code>input</code> class
      * @param <O>    Output class generic type inherited from <code>output</code> class
-     * @return a new MapperHelper Object with input and output types ready for mapping
+     * @return a new Mapperz Object with input and output types ready for mapping
      */
     public static <I, O> Mapperz<I, O> init(Class<I> input, Class<O> output) {
         if(input == null || output == null) {
@@ -44,7 +41,7 @@ public final class Mapperz<I, O> {
     }
 
     /**
-     * Method used to declare one-field value to be provided into constructor when creating new instance.
+     * Method used to declare one-field value to be provided into constructor when creating new output instance.
      * <p>
      * Re-use multiple time for each field inside input class who need to be added to constructor.
      *
@@ -98,7 +95,7 @@ public final class Mapperz<I, O> {
      * If any of the input class field is not declared into mappings, using {@link Mapperz#declare(Function, BiConsumer)},
      * it will not be mapped to output class.
      * @param input Input class instance
-     * @return Output class instance with all value declared mapped from input class.
+     * @return Output class instance with all value declared mapped from input class or null.
      */
     public O map(I input) {
         return map(input, this::instanciate);
@@ -111,7 +108,7 @@ public final class Mapperz<I, O> {
      * @param input Input class instance
      * @param output Output class if you want to provide (be careful if you use <br>
      * {@link Mapperz#declareInConstructor(Function)}, you cannot use this field to override. Instead use {@link Mapperz#map(Object)}
-     * @return Output class instance with all value declared mapped from input class.
+     * @return Output class instance with all value declared mapped from input class or null.
      */
     public O map(I input, Supplier<O> output) {
         // Return a null output if input is null
@@ -151,7 +148,8 @@ public final class Mapperz<I, O> {
      */
     private BiFunction<I, O, O> resolve(Function<I, Object> from, BiConsumer<O, Object> to) {
         return (input, output) -> {
-            to.accept(output, from.apply(input));
+            Object o = from.apply(input);
+            if (o != null) to.accept(output, o);
             return output;
         };
     }
@@ -167,10 +165,9 @@ public final class Mapperz<I, O> {
         try {
             return outClass.getDeclaredConstructor(params).newInstance(objects);
         } catch (Exception e) {
-            log.error("Error when trying to instanciate output class", e);
             throw new IllegalArgumentException(
                     "Be sure to provide arguments in constructor in the right order when you use declareInConstructor() " +
-                            "method or when you have an output object with no default constructor."
+                            "method or when you have an output object with no default constructor.", e
             );
         }
     }

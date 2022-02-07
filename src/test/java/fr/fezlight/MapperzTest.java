@@ -6,16 +6,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 class MapperzTest {
     @Data
@@ -81,7 +78,7 @@ class MapperzTest {
     }
 
     @Test
-    @DisplayName("Given function, biconsumer When declare Then success an has two items")
+    @DisplayName("Given function, biconsumer When declare Then success and has two items")
     @SuppressWarnings("unchecked")
     void testDeclare() throws NoSuchFieldException, IllegalAccessException {
         Mapperz<TestObject, TestObjectDTO> mapper = Mapperz
@@ -97,7 +94,7 @@ class MapperzTest {
     }
 
     @Test
-    @DisplayName("Given function, biconsumer When map Then success an map to dto without string attribute")
+    @DisplayName("Given function, biconsumer When map Then success and map to dto without string attribute")
     void testMap() {
         Mapperz<TestObject, TestObjectDTO> mapper = Mapperz
                 .init(TestObject.class, TestObjectDTO.class)
@@ -114,7 +111,7 @@ class MapperzTest {
     }
 
     @Test
-    @DisplayName("Given function, biconsumer When map Then success an map to dto")
+    @DisplayName("Given function, biconsumer When map Then success and map to dto")
     void testMap_allMapped() {
         Mapperz<TestObject, TestObjectDTO> mapper = Mapperz
                 .init(TestObject.class, TestObjectDTO.class)
@@ -123,6 +120,26 @@ class MapperzTest {
                 .declare(TestObject::getString, TestObjectDTO::setString);
 
         TestObjectDTO result = mapper.map(TestObject.of(12, true, "test"));
+
+        assertThat(result).isNotNull();
+        assertThat(result.getInteger()).isEqualTo(12);
+        assertThat(result.getBool()).isTrue();
+        assertThat(result.getString()).isEqualTo("test");
+    }
+
+    @Test
+    @DisplayName("Given function and destination dto with datas, biconsumer When map Then success and map to dto")
+    void testMap_allMapped_preserve_destination_data() {
+        Mapperz<TestObject, TestObjectDTO> mapper = Mapperz
+                .init(TestObject.class, TestObjectDTO.class)
+                .declare(TestObject::isBool, TestObjectDTO::setBool)
+                .declare(TestObject::getInteger, TestObjectDTO::setInteger)
+                .declare(TestObject::getString, TestObjectDTO::setString);
+
+        TestObjectDTO testObjectDto = new TestObjectDTO();
+        testObjectDto.setString("test");
+
+        TestObjectDTO result = mapper.map(TestObject.of(12, true, null), () -> testObjectDto);
 
         assertThat(result).isNotNull();
         assertThat(result.getInteger()).isEqualTo(12);
