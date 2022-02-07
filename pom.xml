@@ -4,7 +4,7 @@
 
     <groupId>fr.fezlight</groupId>
     <artifactId>mapperz</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>mapperz</name>
@@ -27,7 +27,7 @@
         <connection>scm:git:https://gitlab.fezlight.fr/fezlight/mapperz.git</connection>
         <developerConnection>scm:git:ssh://git@gitlab.fezlight.fr:10022/fezlight/mapperz.git</developerConnection>
         <url>${project.url}</url>
-      <tag>HEAD</tag>
+      <tag>mapperz-1.0.1</tag>
     </scm>
 
     <licenses>
