@@ -24,12 +24,19 @@ jobs:
           server-password: MAVEN_PASSWORD
       - name: Run maven tests
         run: mvn -B verify --file pom.xml
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+         filename:
+           coverage.cobertura.xml
   deploy:
     if: contains( github.ref, 'master')
     runs-on: ubuntu-latest
     steps:
       - name: Publish to maven central
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode deploy -Dmaven.test.skip=true
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
