@@ -41,9 +41,19 @@ jobs:
     needs:
       - build
     steps:
-      - uses: irongut/CodeCoverageSummary@v1.3.0
+      - name: Cache Maven
+        id: cache-maven
+        uses: actions/cache@v3
         env:
           cache-name: cache-maven
+        with:
+          path: target
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - uses: irongut/CodeCoverageSummary@v1.3.0
         with:
          filename: target/site/cobertura/coverage.xml
   deploy:
