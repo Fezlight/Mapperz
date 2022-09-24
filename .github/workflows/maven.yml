@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Cache node modules
+      - name: Cache Maven
         id: cache-maven
         uses: actions/cache@v3
         env:
@@ -45,7 +45,6 @@ jobs:
         env:
           cache-name: cache-maven
         with:
-         cache: maven
          filename: target/site/cobertura/coverage.xml
   deploy:
     if: contains( github.ref, 'master')
