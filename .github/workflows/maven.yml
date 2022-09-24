@@ -54,7 +54,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: list files
-        run: ls -l
+        run: tree -d
       - uses: irongut/CodeCoverageSummary@v1.3.0
         with:
          filename: target/site/cobertura/coverage.xml
