@@ -55,6 +55,8 @@ jobs:
             ${{ runner.os }}-
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.1
+        with:
+          files: target/site/jacoco/jacoco.xml
   deploy:
     if: contains( github.ref, 'master')
     runs-on: ubuntu-latest
