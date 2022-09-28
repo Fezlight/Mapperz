@@ -54,7 +54,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v3.1.1
   deploy:
     if: contains( github.ref, 'master')
     runs-on: ubuntu-latest
