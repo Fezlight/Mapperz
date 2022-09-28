@@ -62,7 +62,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>1.18.24</version>
             <scope>test</scope>
         </dependency>
 
@@ -161,7 +161,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>${maven-release-plugin.version}</version>
                 <configuration>
-                    <scmCommentPrefix>[skip ci][Release-PLUGIN]</scmCommentPrefix>
+                    <scmCommentPrefix>[Release-PLUGIN]</scmCommentPrefix>
                 </configuration>
             </plugin>
         </plugins>
