@@ -20,14 +20,14 @@
         <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <sign-maven-plugin.version>0.3.1</sign-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     </properties>
 
     <scm>
         <connection>scm:git:https://gitlab.fezlight.fr/fezlight/mapperz.git</connection>
         <developerConnection>scm:git:ssh://git@gitlab.fezlight.fr:10022/fezlight/mapperz.git</developerConnection>
         <url>${project.url}</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <licenses>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>1.18.24</version>
             <scope>test</scope>
         </dependency>
 
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.22.0</version>
+            <version>3.23.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -142,14 +142,14 @@
                 <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>coverage-initialize</id>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>coverage-report</id>
-                        <phase>post-integration-test</phase>
+                        <id>report</id>
+                        <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
