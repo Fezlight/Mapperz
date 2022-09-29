@@ -161,7 +161,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>${maven-release-plugin.version}</version>
                 <configuration>
-                    <scmCommentPrefix>[Release-PLUGIN]</scmCommentPrefix>
+                    <scmCommentPrefix>[skip ci][Release-PLUGIN]</scmCommentPrefix>
                 </configuration>
             </plugin>
         </plugins>
