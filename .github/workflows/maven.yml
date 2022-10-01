@@ -13,13 +13,13 @@ env:
   maven-servers: |
     [{
       "id": "sonatype-nexus-snapshots",
-      "username": "${MAVEN_REPOSITORY_USERNAME}",
-      "password": "${MAVEN_REPOSITORY_PASSWORD}"
+      "username": "${env.MAVEN_REPOSITORY_USERNAME}",
+      "password": "${env.MAVEN_REPOSITORY_PASSWORD}"
     },
     {
       "id": "sonatype-nexus-staging",
-      "username": "${MAVEN_REPOSITORY_USERNAME}",
-      "password": "${MAVEN_REPOSITORY_PASSWORD}"
+      "username": "${env.MAVEN_REPOSITORY_USERNAME}",
+      "password": "${env.MAVEN_REPOSITORY_PASSWORD}"
     }]
 
 jobs:
@@ -92,7 +92,7 @@ jobs:
          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         with:
-          maven-args: "--batch-mode -Dmaven.test.skip=true -s ci_settings.xml"
+          maven-args: "--batch-mode -Dmaven.test.skip=true -Ddockerfile.skip -DdockerCompose.skip"
           maven-servers: $maven-servers
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           gpg-enabled: true
