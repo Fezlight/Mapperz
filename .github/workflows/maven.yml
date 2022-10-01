@@ -53,13 +53,6 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: 'maven'
-      - name: Setup maven servers
-        uses: whelk-io/maven-settings-xml-action@v20
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        with:
-          servers: $maven-servers
       - name: Publish to maven central
         run: mvn --batch-mode deploy -Dmaven.test.skip=true -s ci_settings.xml
         env:
