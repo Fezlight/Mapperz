@@ -4,6 +4,8 @@ v1.0.0, 2021-10-31
 :project-name: Mapperz
 :hardbreaks-option:
 
+image::https://codecov.io/gh/Fezlight/Mapperz/branch/master/graph/badge.svg?token=KEFZ8I92JK[https://codecov.io/gh/Fezlight/Mapperz]
+
 {project-name} is a Java library for the mapping of Java bean classes between each other.
 It will provide to you a powerful engine to write mapping using Java 8 Lambda Function / Consumer feature. {project-name} is built to be helpful for many situations like when you want to write complex mapping, lambda expression will help you to achieve this work.
 
