@@ -1,7 +1,13 @@
 package fr.fezlight;
 
+import de.cronn.reflection.util.PropertyUtils;
+
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 /**
  * Class used to map from any object to another by using lambda expression
@@ -10,16 +16,26 @@ import java.util.function.*;
  * @param <I> Input class generic type
  * @param <O> Output class generic type
  * @author FezLight
- * @version 1.0
+ * @version 1.1.0
+ * @since 1.0.0
  */
 public final class Mapperz<I, O> {
+    public static final String ERROR_MAPPING_FIELDS_TYPE_DIFFER =
+            "Mapping between '%s' fields cannot be achieve because types differ from %s to %s\n" +
+            "- Rename this field to avoid auto mapping or declare it manually with declare() method\n" +
+            "Note : Be sure to exclude field from auto-mapping after manual mapping by using declareAutomatic(<excludedFields>)";
     private final Map<Function<I, Object>, BiConsumer<O, Object>> mappings = new HashMap<>();
     private final List<Function<I, Object>> listArgsConstructor = new ArrayList<>();
-    private Class<I> inClass;
-    private Class<O> outClass;
+    private final List<PropertyDescriptor> inputPropertyDescriptors;
+
+    private final List<PropertyDescriptor> outputPropertyDescriptors;
+    private final Class<I> inClass;
+    private final Class<O> outClass;
 
     private Mapperz(Class<I> inClass, Class<O> outClass) {
         this.inClass = inClass;
+        this.inputPropertyDescriptors = new ArrayList<>(PropertyUtils.getPropertyDescriptors(inClass));
+        this.outputPropertyDescriptors = new ArrayList<>(PropertyUtils.getPropertyDescriptors(outClass));
         this.outClass = outClass;
     }
 
@@ -35,7 +51,7 @@ public final class Mapperz<I, O> {
      */
     public static <I, O> Mapperz<I, O> init(Class<I> input, Class<O> output) {
         if(input == null || output == null) {
-            throw new IllegalArgumentException("One of the argument provided is null");
+            throw new IllegalArgumentException("Mapperz.init() - One of the argument provided is null");
         }
         return new Mapperz<>(input, output);
     }
@@ -57,7 +73,7 @@ public final class Mapperz<I, O> {
 
     /**
      * Method used to declare one-field mapping to another from input class to
-     * ouput class.
+     * output class.
      * <p>
      * Re-use multiple time for each field inside input class who need to be mapped.
      *
@@ -72,7 +88,7 @@ public final class Mapperz<I, O> {
 
     /**
      * Method used to declare one-field mapping to another from input class to
-     * ouput class.
+     * output class.
      * <p>
      * Re-use multiple time for each field inside input class who need to be mapped.
      *
@@ -89,6 +105,75 @@ public final class Mapperz<I, O> {
         return this;
     }
 
+    /**
+     * Method used to automate mappings for all field from input class to output class using reflection.
+     *
+     * @return current instance to be chained
+     */
+    public Mapperz<I, O> declareAutomatic(){
+        return declareAutomatic(null);
+    }
+
+    /**
+     * Method used to automate mappings for all field from input class to output class using reflection.
+     *
+     * @param excludedFields list of all field name need to be excluded from auto-mapping
+     * @return current instance to be chained
+     */
+    public Mapperz<I, O> declareAutomatic(List<String> excludedFields){
+        List<PropertyDescriptor> inputFields = inputPropertyDescriptors.stream()
+                .filter(field -> excludedFields == null || !excludedFields.contains(field.getName()))
+                .filter(field -> isFieldExistInTargetClass(outClass, field.getName()))
+                .collect(Collectors.toList());
+
+        inputFields.forEach(inputField -> {
+            String fieldName = inputField.getName();
+
+            Function<I, Object> from = input -> PropertyUtils.read(input, inputField);
+
+            PropertyDescriptor outputField = getPropertyDescriptorOfField(outputPropertyDescriptors, fieldName);
+
+            Type getterType = inputField.getReadMethod().getGenericReturnType();
+            Type setterType = outputField.getWriteMethod().getGenericParameterTypes()[0];
+
+            validateGenericType(getterType, setterType, fieldName);
+
+            BiConsumer<O, Object> biConsumer = (output, data) -> PropertyUtils.write(output, outputField, data);
+
+            this.declare(from, biConsumer);
+        });
+        return this;
+    }
+
+    private static void validateGenericType(Type getterType, Type setterType, String fieldName) {
+        if (!(getterType instanceof ParameterizedType) && !(setterType instanceof ParameterizedType)) {
+            return;
+        }
+
+        Type[] typeGetter = null;
+        if (getterType instanceof ParameterizedType) {
+            typeGetter = ((ParameterizedType) getterType).getActualTypeArguments();
+        }
+
+        Type[] typeSetter = null;
+        if (setterType instanceof ParameterizedType) {
+            typeSetter = ((ParameterizedType) setterType).getActualTypeArguments();
+        }
+
+        if (typeSetter == null || typeGetter == null) {
+            throw new IllegalArgumentException(String.format(ERROR_MAPPING_FIELDS_TYPE_DIFFER, fieldName, getterType, setterType));
+        }
+
+        if (typeGetter.length != typeSetter.length) {
+            throw new IllegalArgumentException(String.format(ERROR_MAPPING_FIELDS_TYPE_DIFFER, fieldName, getterType, setterType));
+        }
+
+        for (int i = 0; i < typeGetter.length; i++) {
+            if (!typeGetter[i].getTypeName().equals(typeSetter[i].getTypeName())) {
+                throw new IllegalArgumentException(String.format(ERROR_MAPPING_FIELDS_TYPE_DIFFER, fieldName, getterType, setterType));
+            }
+        }
+    }
 
     /**
      * Method used to start mapping between input class and output class using declared items previously provided.
@@ -106,7 +191,7 @@ public final class Mapperz<I, O> {
      * If any of the input class field is not declared into mappings, using {@link Mapperz#declare(Function, BiConsumer)},
      * it will not be mapped to output class.
      * @param input Input class instance
-     * @param output Output class if you want to provide (be careful if you use <br>
+     * @param output Output class if you want to provide, be careful if you use <br>
      * {@link Mapperz#declareInConstructor(Function)}, you cannot use this field to override. Instead use {@link Mapperz#map(Object)}
      * @return Output class instance with all value declared mapped from input class or null.
      */
@@ -170,5 +255,21 @@ public final class Mapperz<I, O> {
                             "method or when you have an output object with no default constructor.", e
             );
         }
+    }
+
+    private static PropertyDescriptor getPropertyDescriptorOfField(List<PropertyDescriptor> attributesDesc, String fieldName) {
+        return attributesDesc.stream()
+                .filter(attribute -> attribute.getName().equals(fieldName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("No property descriptor found for field %s", fieldName)));
+    }
+
+    private static boolean isFieldExistInTargetClass(Class<?> targetClazz, String fieldName) {
+        try {
+            targetClazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            return false;
+        }
+        return true;
     }
 }
