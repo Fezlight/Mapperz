@@ -56,8 +56,8 @@ jobs:
       - name: Publish to maven central
         run: mvn --batch-mode deploy -Dmaven.test.skip=true -s ci_settings.xml
         env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          MAVEN_REPOSITORY_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_REPOSITORY_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           SIGN_KEY: ${{ secrets.SIGN_KEY }}
           SIGN_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
           SIGN_KEY_PASS: ${{ secrets.SIGN_KEY_PASS }}
@@ -82,8 +82,8 @@ jobs:
         uses: qcastel/github-actions-maven-release@master
         env:
          JAVA_HOME: /usr/lib/jvm/java-1.8-openjdk/
-         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-         MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+         MAVEN_REPOSITORY_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+         MAVEN_REPOSITORY_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         with:
           maven-args: "--batch-mode -Dmaven.test.skip=true -Ddockerfile.skip -DdockerCompose.skip"
           maven-servers: $maven-servers
