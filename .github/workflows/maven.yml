@@ -84,13 +84,11 @@ jobs:
          JAVA_HOME: /usr/lib/jvm/java-1.8-openjdk/
          MAVEN_REPOSITORY_USERNAME: ${{ secrets.OSSRH_USERNAME }}
          MAVEN_REPOSITORY_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+         SIGN_KEY: ${{ secrets.SIGN_KEY }}
+         SIGN_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
+         SIGN_KEY_PASS: ${{ secrets.SIGN_KEY_PASS }}
         with:
-          maven-args: "--batch-mode -Dmaven.test.skip=true -Ddockerfile.skip -DdockerCompose.skip"
-          maven-servers: $maven-servers
+          maven-args: "--batch-mode -Dmaven.test.skip=true -Ddockerfile.skip -DdockerCompose.skip -s ci_settings.xml"
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          gpg-enabled: true
-          gpg-key-id: ${{ secrets.SIGN_KEY_ID }}
-          gpg-passphrase: ${{ secrets.SIGN_KEY_PASS }}
-          gpg-key: ${{ secrets.SIGN_KEY }}
 
 
