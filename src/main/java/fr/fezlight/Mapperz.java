@@ -5,7 +5,10 @@ import de.cronn.reflection.util.PropertyUtils;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
@@ -25,9 +28,9 @@ public final class Mapperz<I, O> {
             "- Rename this field to avoid auto mapping or declare it manually with declare() method\n" +
             "Note : Be sure to exclude field from auto-mapping after manual mapping by using declareAutomatic(<excludedFields>)";
     private final Map<Function<I, Object>, BiConsumer<O, Object>> mappings = new HashMap<>();
-    private final List<Function<I, Object>> listArgsConstructor = new ArrayList<>();
+    private final List<Function<I, Object>> listArgsConstructor = new ArrayList<>(0);
+    private final List<Class<?>> listArgsConstructorType = new ArrayList<>(0);
     private final List<PropertyDescriptor> inputPropertyDescriptors;
-
     private final List<PropertyDescriptor> outputPropertyDescriptors;
     private final Class<I> inClass;
     private final Class<O> outClass;
@@ -61,13 +64,15 @@ public final class Mapperz<I, O> {
      * <p>
      * Re-use multiple time for each field inside input class who need to be added to constructor.
      *
-     * @param from Input class function can return value (most of the time it can be the getter method)
+     * @param from    Input class function can return value (most of the time it can be the getter method)
+     * @param argType Type arg according to constructor arg
      * @param <D>  Value class type to be mapped into constructor
      * @return current instance to be chained
      */
     @SuppressWarnings("unchecked")
-    public <D> Mapperz<I, O> declareInConstructor(Function<I, D> from) {
+    public <D> Mapperz<I, O> declareInConstructor(Function<I, D> from, Class<D> argType) {
         listArgsConstructor.add((Function<I, Object>)from);
+        listArgsConstructorType.add(argType);
         return this;
     }
 
@@ -192,7 +197,7 @@ public final class Mapperz<I, O> {
      * it will not be mapped to output class.
      * @param input Input class instance
      * @param output Output class if you want to provide, be careful if you use <br>
-     * {@link Mapperz#declareInConstructor(Function)}, you cannot use this field to override. Instead use {@link Mapperz#map(Object)}
+     * {@link Mapperz#declareInConstructor(Function,Class)}, you cannot use this field to override. Instead use {@link Mapperz#map(Object)}
      * @return Output class instance with all value declared mapped from input class or null.
      */
     public O map(I input, Supplier<O> output) {
@@ -241,12 +246,12 @@ public final class Mapperz<I, O> {
 
     /**
      * Method used to create a new instance of the output class with any object needed in constructor declared previously
-     * by using {@link Mapperz#declareInConstructor(Function)} method.
+     * by using {@link Mapperz#declareInConstructor(Function,Class)} method.
      * @param objects Constructor object (Must be in the right order)
      * @return a new instance of Output class
      */
     private O instanciate(Object ... objects) {
-        Class<?>[] params = Arrays.stream(objects).parallel().map(Object::getClass).toArray(Class[]::new);
+        Class<?>[] params = listArgsConstructorType.toArray(new Class[0]);
         try {
             return outClass.getDeclaredConstructor(params).newInstance(objects);
         } catch (Exception e) {

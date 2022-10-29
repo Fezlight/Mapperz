@@ -355,8 +355,8 @@ class MapperzTest {
     void testMap_usingDeclareConstructorErrorWhenInstanciate() {
         Mapperz<TestObject2DTO, TestObject2> mapper = Mapperz
                 .init(TestObject2DTO.class, TestObject2.class)
-                .declareInConstructor(TestObject2DTO::getId)
-                .declareInConstructor(TestObject2DTO::getDescription);
+                .declareInConstructor(TestObject2DTO::getId, Integer.class)
+                .declareInConstructor(TestObject2DTO::getDescription, String.class);
                 // Missing one constructor params
 
         LocalDate date = LocalDate.now();
@@ -371,13 +371,32 @@ class MapperzTest {
     }
 
     @Test
+    @DisplayName("Given function, biconsumer, output class with one args null in constructor When map Then success")
+    void testMap_usingDeclareConstructor_oneArgsNull() {
+        Mapperz<TestObject2DTO, TestObject2> mapper = Mapperz
+                .init(TestObject2DTO.class, TestObject2.class)
+                .declareInConstructor(TestObject2DTO::getId, Integer.class)
+                .declareInConstructor(TestObject2DTO::getDescription, String.class)
+                .declareInConstructor(TestObject2DTO::getReleaseDate, LocalDate.class);
+
+        TestObject2 result = mapper.map(TestObject2DTO.of(12, "test", null, "test2"));
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(12);
+        assertThat(result.getDescription()).isEqualTo("test");
+        assertThat(result.getReleaseDate()).isNull();
+        // Not mapped with declare()
+        assertThat(result.getNotInConstructor()).isNull();
+    }
+
+    @Test
     @DisplayName("Given function, biconsumer, output class with constructor params When map Then success ")
     void testMap_usingDeclareConstructor() {
         Mapperz<TestObject2DTO, TestObject2> mapper = Mapperz
                 .init(TestObject2DTO.class, TestObject2.class)
-                .declareInConstructor(TestObject2DTO::getId)
-                .declareInConstructor(TestObject2DTO::getDescription)
-                .declareInConstructor(TestObject2DTO::getReleaseDate);
+                .declareInConstructor(TestObject2DTO::getId, Integer.class)
+                .declareInConstructor(TestObject2DTO::getDescription, String.class)
+                .declareInConstructor(TestObject2DTO::getReleaseDate, LocalDate.class);
 
         LocalDate date = LocalDate.now();
         TestObject2 result = mapper.map(TestObject2DTO.of(12, "test", date, "test2"));
@@ -395,9 +414,9 @@ class MapperzTest {
     void testMap_usingDeclareConstructorAllMapped() {
         Mapperz<TestObject2DTO, TestObject2> mapper = Mapperz
                 .init(TestObject2DTO.class, TestObject2.class)
-                .declareInConstructor(TestObject2DTO::getId)
-                .declareInConstructor(TestObject2DTO::getDescription)
-                .declareInConstructor(TestObject2DTO::getReleaseDate)
+                .declareInConstructor(TestObject2DTO::getId, Integer.class)
+                .declareInConstructor(TestObject2DTO::getDescription, String.class)
+                .declareInConstructor(TestObject2DTO::getReleaseDate, LocalDate.class)
                 .declare(TestObject2DTO::getInConstructor, TestObject2::setNotInConstructor);
 
         LocalDate date = LocalDate.now();
