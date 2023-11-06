@@ -9,7 +9,7 @@
 
     <name>mapperz</name>
     <description>A simple mapper using Java 8 Lambda expressions</description>
-    <url>https://gitlab.fezlight.fr/fezlight/mapperz</url>
+    <url>https://github.com/Fezlight/Mapperz</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,9 +40,9 @@
     <developers>
         <developer>
             <name>FezLight</name>
-            <email>projects@fezlight.fr	</email>
+            <email>projects@fezlight.fr</email>
             <organization>FezLight</organization>
-            <organizationUrl>https://gitlab.fezlight.fr/</organizationUrl>
+            <organizationUrl>https://github.com/Fezlight/Mapperz</organizationUrl>
         </developer>
     </developers>
 
