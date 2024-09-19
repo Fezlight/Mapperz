@@ -4,7 +4,7 @@
 
     <groupId>fr.fezlight</groupId>
     <artifactId>mapperz</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.2</version>
     <packaging>jar</packaging>
 
     <name>mapperz</name>
@@ -27,7 +27,7 @@
         <connection>scm:git:${project.scm.url}</connection>
         <developerConnection>scm:git:${project.scm.url}</developerConnection>
         <url>git@github.com:Fezlight/Mapperz.git</url>
-        <tag>HEAD</tag>
+        <tag>mapperz-1.1.2</tag>
     </scm>
 
     <licenses>
