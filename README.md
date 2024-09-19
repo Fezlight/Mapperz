@@ -1,3 +1,34 @@
+# Mapperz
+
+![https://codecov.io/gh/Fezlight/Mapperz!](https://codecov.io/gh/Fezlight/Mapperz/branch/master/graph/badge.svg?token=KEFZ8I92JK)
+
+Mapperz is a Java library for the mapping of Java bean classes between each other.
+It will provide to you a powerful engine to write mapping using Java 8 Lambda Function / Consumer feature. Mapperz is built to be helpful for many situations like when you want to write complex mapping, lambda expression will help you to achieve this work.
+
+## Requirement
+
+Java 8+
+
+## Installation
+
+### Maven
+
+```xml
+<dependency>
+    <groupId>fr.fezlight</groupId>
+    <artifactId>mapperz</artifactId>
+    <version>VERSION</version>
+</dependency>
+```
+
+### Gradle
+
+```
+implementation 'fr.fezlight:mapperz:VERSION'
+```
+
+See on [Sonatype Maven Central](https://search.maven.org/artifact/fr.fezlight/mapperz) for versions.
+
 ## How it works ?
 
 ## Simple mapping
@@ -180,7 +211,7 @@ public class CityDTO {
 }
 ```
 
-With this new scheme, let's test our mapper 
+With this new scheme, let's test our mapper
 ```java
 class CityMapperTest {  
     @Test
@@ -222,6 +253,15 @@ public final class CityMapper {
 }
 ```
 
-Here i'm asking Mapperz to use **City::getName** and give it as the first parameter and **City::getPostalCode** as the second parameter just by method chaining order. 
+Here i'm asking Mapperz to use **City::getName** and give it as the first parameter and **City::getPostalCode** as the second parameter just by method chaining order.
 
 Now it works !
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## License
+
+Mapperz is licensed under Apache License. [Available here](https://www.apache.org/licenses/LICENSE-2.0.txt)
